@@ -1,25 +1,18 @@
-import { Component } from 'react'
-import { Card, Button, Col } from 'react-bootstrap'
-import CommentArea from './CommentArea'
-
-// SingleBook deve far vedere un libro! Ma non sa di quale libro si tratta...
-// ...sa solo che lo riceverà nelle props sotto forma di "book"
+import { Component } from "react";
+import { Card, Button, Col } from "react-bootstrap";
+import CommentArea from "./CommentArea";
 
 class SingleBook extends Component {
   state = {
     selected: false,
-  }
+  };
 
   render() {
     return (
       <Col xs={12} md={6} lg={3}>
         <Card
-          // className={
-          //   this.state.selected ? 'altraclasse selectedBook' : 'altraclasse'
-          // }
-          //   className={`altraclasse ${this.state.selected ? 'selectedBook' : ''}`}
           style={{
-            border: this.state.selected ? '2px solid red' : '1px solid gray',
+            border: this.state.selected ? "2px solid red" : "1px solid gray",
           }}
         >
           <Card.Img
@@ -28,24 +21,23 @@ class SingleBook extends Component {
             onClick={() => {
               this.setState({
                 selected: !this.state.selected, // toggle
-              })
+              });
             }}
           />
           <Card.Body>
             <Card.Title>{this.props.book.title}</Card.Title>
             <Card.Text>
-              {this.props.book.category} - {this.props.book.price}
+              {this.props.book.category} - {this.props.book.price}€
             </Card.Text>
             <Button variant="primary">Go somewhere</Button>
           </Card.Body>
 
-
-          {this.state.selected && <CommentArea />}
-
+          {/* Mostra CommentArea solo se il libro è selezionato */}
+          {this.state.selected && <CommentArea asin={this.props.book.asin} />}
         </Card>
       </Col>
-    )
+    );
   }
 }
 
-export default SingleBook
+export default SingleBook;

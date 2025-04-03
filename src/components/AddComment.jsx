@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-const AddComment = ({ bookId, addNewComment }) => {
+const AddComment = ({ asin, addNewComment }) => {
   const [comment, setComment] = useState("");
-  const [rate, setRate] = useState(1);
+  const [rate, setRate] = useState("1");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -17,9 +17,9 @@ const AddComment = ({ bookId, addNewComment }) => {
     const newComment = {
       comment,
       rate: rate.toString(),
-      elementId: bookId,
+      elementId: asin,
     };
-    console.log("Commento da inviare:", newComment);
+
     setLoading(true);
     setError(null);
 
@@ -44,9 +44,8 @@ const AddComment = ({ bookId, addNewComment }) => {
       const addedComment = await response.json();
       addNewComment(addedComment);
       setComment("");
-      setRate(1);
+      setRate("1");
     } catch (error) {
-      console.error("Errore nell'aggiungere il commento:", error);
       setError("Errore nell'aggiungere il commento, riprova più tardi.");
     } finally {
       setLoading(false);
@@ -57,13 +56,22 @@ const AddComment = ({ bookId, addNewComment }) => {
     <div>
       <h3>Aggiungi un Commento</h3>
       <form onSubmit={handleSubmit}>
-        <textarea
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Scrivi il tuo commento"
-          rows="4"
-          cols="50"
-        />
+      <textarea
+  value={comment}
+  onChange={(e) => setComment(e.target.value)}
+  placeholder="Scrivi il tuo commento"
+  rows="4"  
+  cols="50"
+  style={{
+    width: '100%', 
+    maxWidth: '100%',
+    minHeight: '100px',
+    maxHeight: '200px',
+    resize: 'vertical', 
+    overflow: 'auto', 
+    padding: '8px',
+  }}
+/>
         <br />
         <select value={rate} onChange={(e) => setRate(e.target.value)}>
           <option value="1">1</option>
