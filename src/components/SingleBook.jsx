@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import { Card, Button, Col } from 'react-bootstrap'
+import CommentArea from './CommentArea'
 
 // SingleBook deve far vedere un libro! Ma non sa di quale libro si tratta...
 // ...sa solo che lo riceverà nelle props sotto forma di "book"
@@ -37,6 +38,10 @@ class SingleBook extends Component {
             </Card.Text>
             <Button variant="primary">Go somewhere</Button>
           </Card.Body>
+
+
+          {this.state.selected && <CommentArea />}
+
         </Card>
       </Col>
     )

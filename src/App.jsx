@@ -6,6 +6,7 @@ import AllTheBooks from './components/AllTheBooks'
 import SingleBook from './components/SingleBook'
 import scifiBooks from './data/scifi.json'
 import BookList from './components/BookList'
+
 // scifiBooks è un array di libri di fantascienza
 
 function App() {
@@ -20,10 +21,10 @@ function App() {
         sotto forma di prop: chiameremo questa prop (oggetto) "book" */}
         {/* <SingleBook book={scifiBooks[19]} />
 
-        <SingleBook book={scifiBooks[2]} />
+        <SingleBook book={scifiBooks[2]} />*/}
         
-        <SingleBook book={scifiBooks[9]} /> */}
-        <BookList arrayOfBooks={scifiBooks} />
+        <SingleBook book={scifiBooks[9]} /> 
+     {/*   <BookList arrayOfBooks={scifiBooks} />*/}
       </main>
       <MyFooter />
     </div>
