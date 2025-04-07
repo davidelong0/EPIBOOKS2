@@ -1,60 +1,64 @@
-// BookList riceve dalle props un array di libri, sotto il nome di "arrayOfBooks"
-
 import { Container, Form, Row, Col } from 'react-bootstrap'
 import SingleBook from './SingleBook'
+import CommentArea from './CommentArea'
 import { Component } from 'react'
 
 class BookList extends Component {
   state = {
-    search: '', // il valore del campo di ricerca
+    search: '',
+    selectedAsin: null,
+  }
+
+  handleBookSelect = (asin) => {
+    this.setState({ selectedAsin: asin })
   }
 
   render() {
+    const filteredBooks = this.props.arrayOfBooks.filter((libro) =>
+      libro.title.toLowerCase().includes(this.state.search.toLowerCase())
+    )
+
     return (
-      <Container>
-        <Row className="justify-content-center my-5">
+      <Container fluid>
+        <Row className="justify-content-center my-4">
           <Col xs={12} md={6}>
             <Form.Control
               type="text"
-              placeholder="cerca un libro"
+              placeholder="Cerca un libro"
               value={this.state.search}
-              onChange={(e) => {
-                this.setState({
-                  search: e.target.value,
-                })
-              }}
+              onChange={(e) =>
+                this.setState({ search: e.target.value })
+              }
+              className="bg-dark text-light border-secondary"
             />
           </Col>
         </Row>
+
         <Row>
-          {this.props.arrayOfBooks
-            .filter((libro) => {
-              // filter applica una condizione ad ogni libro
-              // se la condizione ritorna true, il libro corrente farà parte
-              // dell'array filtrato; se invece la condizione sul libro torna false,
-              // il filtro blocca il libro e non andrà a far parte dei risultati
-              if (
-                libro.title
-                  .toLowerCase()
-                  .includes(this.state.search.toLowerCase())
-              ) {
-                return true
-              } else {
-                return false
-              }
-            })
-            // versione abbreviata ultrapro
-            // .filter((libro) =>
-            //   libro.title
-            //     .toLowerCase()
-            //     .includes(this.state.search.toLowerCase())
-            // )
-            .map((libro) => {
-              // genero 50 volte SingleBook
-              // per ogni libro genero un SingleBook
-              // ogni invocazione di SingleBook riceve un libro diverso!
-              return <SingleBook book={libro} key={libro.asin} />
-            })}
+          {/* Colonna sinistra: griglia libri */}
+          <Col md={8}>
+            <Row>
+              {filteredBooks.map((libro) => (
+                <SingleBook
+                  book={libro}
+                  key={libro.asin}
+                  isSelected={this.state.selectedAsin === libro.asin}
+                  onBookSelect={() => this.handleBookSelect(libro.asin)}
+                />
+              ))}
+            </Row>
+          </Col>
+
+          {/* Colonna destra: CommentArea */}
+          <Col md={4}>
+            <div className="bg-secondary text-light p-3 rounded sticky-top" style={{ top: '80px' }}>
+              {this.state.selectedAsin ? (
+                <CommentArea asin={this.state.selectedAsin} />
+              ) : (
+                <p>Seleziona un libro per vedere i commenti</p>
+              )}
+            </div>
+          </Col>
         </Row>
       </Container>
     )

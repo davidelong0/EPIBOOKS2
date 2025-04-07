@@ -1,54 +1,67 @@
-import { useEffect, useState } from "react";
-import CommentsList from "./CommentList";
-import AddComment from "./AddComment";
+import { Component } from 'react'
+import CommentsList from './CommentList'
+import AddComment from './AddComment'
 
-const CommentArea = ({ asin }) => {
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+class CommentArea extends Component {
+  state = {
+    comments: [],
+    loading: true,
+    error: null,
+  }
 
-  const fetchComments = async () => {
+  fetchComments = async () => {
     try {
+      this.setState({ loading: true, error: null })
       const response = await fetch(
-        `https://striveschool-api.herokuapp.com/api/comments/${asin}`,
+        `https://striveschool-api.herokuapp.com/api/comments/${this.props.asin}`,
         {
           headers: {
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlOGM1OTk0OTJlNDAwMTVlN2M3MDAiLCJpYXQiOjE3NDM2ODY3NDUsImV4cCI6MTc0NDg5NjM0NX0.RVzqFHJsRpiNQZh7bSxVXUavJPN0UrVAgxjq6pkWQrI",
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlOGM1OTk0OTJlNDAwMTVlN2M3MDAiLCJpYXQiOjE3NDM2ODY3NDUsImV4cCI6MTc0NDg5NjM0NX0.RVzqFHJsRpiNQZh7bSxVXUavJPN0UrVAgxjq6pkWQrI',
           },
         }
-      );
+      )
 
       if (!response.ok) {
-        throw new Error("Errore nel recupero dei commenti");
+        throw new Error('Errore nel recupero dei commenti')
       }
 
-      const data = await response.json();
-      setComments(data);
+      const data = await response.json()
+      this.setState({ comments: data })
     } catch (err) {
-      setError(err.message);
+      this.setState({ error: err.message })
     } finally {
-      setLoading(false);
+      this.setState({ loading: false })
     }
-  };
+  }
 
-  useEffect(() => {
-    fetchComments();
-  }, [asin]);
+  componentDidMount() {
+    this.fetchComments()
+  }
 
-  const addNewComment = (newComment) => {
-    setComments([...comments, newComment]);
-  };
+  componentDidUpdate(prevProps) {
+    if (prevProps.asin !== this.props.asin) {
+      this.fetchComments()
+    }
+  }
 
-  return (
-    <div>
-      <h5>Recensioni</h5>
-      {loading && <p>Caricamento...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <CommentsList comments={comments} />
-      <AddComment asin={asin} addNewComment={addNewComment} />
-    </div>
-  );
-};
+  addNewComment = (newComment) => {
+    this.setState({ comments: [...this.state.comments, newComment] })
+  }
 
-export default CommentArea;
+  render() {
+    const { loading, error, comments } = this.state
+
+    return (
+      <div>
+        <h5>Recensioni</h5>
+        {loading && <p>Caricamento...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <CommentsList comments={comments} />
+        <AddComment asin={this.props.asin} addNewComment={this.addNewComment} />
+      </div>
+    )
+  }
+}
+
+export default CommentArea
