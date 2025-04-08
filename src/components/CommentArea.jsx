@@ -1,19 +1,19 @@
-import { Component } from 'react'
+import { useState, useEffect } from 'react'
 import CommentsList from './CommentList'
 import AddComment from './AddComment'
 
-class CommentArea extends Component {
-  state = {
-    comments: [],
-    loading: true,
-    error: null,
-  }
+const CommentArea = ({ asin }) => {
+  const [comments, setComments] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  fetchComments = async () => {
+  const fetchComments = async () => {
     try {
-      this.setState({ loading: true, error: null })
+      setLoading(true)
+      setError(null)
+
       const response = await fetch(
-        `https://striveschool-api.herokuapp.com/api/comments/${this.props.asin}`,
+        `https://striveschool-api.herokuapp.com/api/comments/${asin}`,
         {
           headers: {
             Authorization:
@@ -27,41 +27,31 @@ class CommentArea extends Component {
       }
 
       const data = await response.json()
-      this.setState({ comments: data })
+      setComments(data)
     } catch (err) {
-      this.setState({ error: err.message })
+      setError(err.message)
     } finally {
-      this.setState({ loading: false })
+      setLoading(false)
     }
   }
 
-  componentDidMount() {
-    this.fetchComments()
+  useEffect(() => {
+    fetchComments()
+  }, [asin]) 
+
+  const addNewComment = (newComment) => {
+    setComments((prevComments) => [...prevComments, newComment])
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.asin !== this.props.asin) {
-      this.fetchComments()
-    }
-  }
-
-  addNewComment = (newComment) => {
-    this.setState({ comments: [...this.state.comments, newComment] })
-  }
-
-  render() {
-    const { loading, error, comments } = this.state
-
-    return (
-      <div>
-        <h5>Recensioni</h5>
-        {loading && <p>Caricamento...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <CommentsList comments={comments} />
-        <AddComment asin={this.props.asin} addNewComment={this.addNewComment} />
-      </div>
-    )
-  }
+  return (
+    <div>
+      <h5>Recensioni</h5>
+      {loading && <p>Caricamento...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <CommentsList comments={comments} />
+      <AddComment asin={asin} addNewComment={addNewComment} />
+    </div>
+  )
 }
 
 export default CommentArea
